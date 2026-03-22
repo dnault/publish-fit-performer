@@ -6,7 +6,7 @@ inputs:
     description: "Short SDK name, like 'rust' or 'analytics-python'. Passed to the Dockerfile as SDK build argument, and included in image name."
     required: true
   ref:
-    description: "Blank if this the workflow was triggered by push. Otherwise, git ref to build, like 'main', '3.11.x', '3.11.3', 'refs/changes/58/240858/6', 'refs/pull/37/merge', or full commit hash. "
+    description: "Blank if this the workflow was triggered by push. Otherwise, git ref to build, like 'main', '3.11.x', '3.11.3', 'refs/changes/58/240858/6', 'refs/pull/37/merge', or full commit hash."
     required: true
   dockerfile:
     description: "Path to Dockerfile, like 'fit-performer/Dockerfile'"
@@ -46,6 +46,7 @@ runs:
         if [[ "$INPUT_REF" =~ ^refs/changes/ ]]; then
           echo "source=gerrit" >> $GITHUB_OUTPUT
           echo "image_source_override_for_gerrit=org.opencontainers.image.source=${{ env.GERRIT_SERVER_URL }}/admin/repos/${{ env.GERRIT_REPO_NAME }}" >> $GITHUB_OUTPUT
+          echo "pr_label_for_gerrit=com.couchbase.pr=${{env.GERRIT_SERVER_URL}}/c/${{ env.GERRIT_REPO_NAME }}/+/${INPUT_REF#${INPUT_REF%/*/*}/}" >> $GITHUB_OUTPUT
         else
           echo "source=github" >> $GITHUB_OUTPUT
         fi
@@ -88,6 +89,7 @@ runs:
           com.couchbase.github.actions.run=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
           org.opencontainers.image.revision=${{ env.COMMIT_HASH }}
           ${{ steps.plan.outputs.image_source_override_for_gerrit }}
+          ${{ steps.plan.outputs.pr_label_for_gerrit }}
 
     - name: Build and push Docker image
       id: build
