@@ -115,7 +115,7 @@ runs:
       shell: bash
       run: |
         echo "image=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
-        echo "pinned-image=${{ steps.meta.outputs.bake-file-tags }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+        echo "pinned-image=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
     - name: Print summary
       shell: bash
