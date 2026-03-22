@@ -25,7 +25,10 @@ runs:
       shell: bash
       run: |
         REF_NAME=${{ inputs.ref || github.ref_name }}
-        if [[ "$REF_NAME" =~ ^v[0-9] ]]; then
+        if [[ "$REF_NAME" =~ ^[0-9a-f]{40}$ ]]; then
+            # It's a full commit hash. Truncate for friendliness, and prefix with 'sha-' for easy pruning.
+            REF_NAME="sha-${REF_NAME:0:12}"
+        elif [[ "$REF_NAME" =~ ^v[0-9] ]]; then
             # strip 'v' prefix from tags
             REF_NAME="${REF_NAME#v}"
         fi
@@ -89,7 +92,6 @@ runs:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
           type=raw,value=${{ env.IMAGE_VERSION }}
-          type=sha,format=short
         flavor: latest=false
         labels: |
           com.couchbase.github.actions.run=https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
