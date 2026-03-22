@@ -1,5 +1,4 @@
 name: publish-fit-performer
-author: david.nault
 description: Builds a FIT performer from a Dockerfile and publishes it to ghcr.io
 inputs:
   sdk:
@@ -12,12 +11,12 @@ inputs:
     description: "Path to Dockerfile, like 'fit-performer/Dockerfile'"
     default: 'Dockerfile'
 outputs:
-  image_name:
-    description: "Full name of the Docker image."
-    value: ${{ steps.report.outputs.image_name }}
-  image_digest:
-    description: "Digest of the Docker image."
-    value: ${{ steps.report.outputs.image_digest }}
+  image:
+    description: "Fully qualified image name with human-readable version, like: 'ghcr.io/couchbase/rust-fit-performer:1.0.0'"
+    value: ${{ steps.report.outputs.image }}
+  pinned-image:
+    description: "Canonical image reference, like: 'ghcr.io/couchbase/rust-fit-performer@sha256:<sha>'"
+    value: ${{ steps.report.outputs.pinned-image }}
 runs:
   using: "composite"
   steps:
@@ -115,8 +114,11 @@ runs:
       id: report
       shell: bash
       run: |
-        echo '🔖 `${{ steps.meta.outputs.tags }}`' >> $GITHUB_STEP_SUMMARY
-        echo '📌 `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}`' >> $GITHUB_STEP_SUMMARY
+        echo "image=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
+        echo "pinned-image=${{ steps.meta.outputs.bake-file-tags }}@${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
 
-        echo "image_name=${{ steps.meta.outputs.tags }}" >> $GITHUB_OUTPUT
-        echo "image_digest=${{ steps.build.outputs.digest }}" >> $GITHUB_OUTPUT
+    - name: Print summary
+      shell: bash
+      run: |
+        echo '🔖 `${{ steps.report.outputs.image }}`' >> $GITHUB_STEP_SUMMARY
+        echo '📌 `${{ steps.report.outputs.pinned-image }}`' >> $GITHUB_STEP_SUMMARY
