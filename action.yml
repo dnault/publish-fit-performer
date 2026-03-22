@@ -86,7 +86,7 @@ runs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd
       with:
-        driver: docker-containerd # for cache export
+        driver: docker-container # for cache export
 
     - name: Build and push Docker image
       id: build
