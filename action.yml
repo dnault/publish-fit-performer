@@ -88,6 +88,8 @@ runs:
       id: build
       uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294
       with:
+        cache-from: type=gha
+        cache-to: type=gha,mode=min
         context: .
         file: ${{ inputs.dockerfile }}
         build-args: SDK=${{ inputs.sdk }}
