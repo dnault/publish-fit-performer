@@ -1,0 +1,13 @@
+**/build/*
+**/target/*
+**/out/*
+.idea
+.gradle
+*.iml
+dependency-reduced-pom.xml
+.flattened-pom.xml
+*.log
+*.local.properties
+node_modules
+package-lock.json
+.DS_Store
