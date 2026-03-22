@@ -2,12 +2,12 @@
 
 Builds a FIT performer Docker image and publishes it to `ghcr.io`.
 
-
-
 Example usage:
 
 ```yaml
-name: Build FIT performer
+name: Publish FIT performer
+
+run-name: ${{ github.event.head_commit.message || inputs.ref }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ inputs.ref }}

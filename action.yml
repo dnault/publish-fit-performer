@@ -24,15 +24,15 @@ runs:
     - name: Set environment variables
       shell: bash
       run: |
-        REF_NAME=${{ inputs.ref || github.ref_name }}
-        if [[ "$REF_NAME" =~ ^[0-9a-f]{40}$ ]]; then
+        IMAGE_VERSION=${{ inputs.ref || github.ref_name }}
+        if [[ "$IMAGE_VERSION" =~ ^[0-9a-f]{40}$ ]]; then
             # It's a full commit hash. Truncate for friendliness, and prefix with 'sha-' for easy pruning.
-            REF_NAME="sha-${REF_NAME:0:12}"
-        elif [[ "$REF_NAME" =~ ^v[0-9] ]]; then
-            # strip 'v' prefix from tags
-            REF_NAME="${REF_NAME#v}"
+            IMAGE_VERSION="sha-${IMAGE_VERSION:0:12}"
+        elif [[ "$IMAGE_VERSION" =~ ^v[0-9] ]]; then
+            # It looks like a version number tag prefixed with 'v'. Strip the 'v' for consistency between SDKs.
+            IMAGE_VERSION="${IMAGE_VERSION#v}"
         fi
-        echo "IMAGE_VERSION=${REF_NAME}" >> $GITHUB_ENV
+        echo "IMAGE_VERSION=${IMAGE_VERSION}" >> $GITHUB_ENV
         echo "REGISTRY=ghcr.io" >> $GITHUB_ENV
         echo "IMAGE_NAME=${{ github.repository_owner }}/${{ inputs.sdk }}-fit-performer" >> $GITHUB_ENV
 
